@@ -1,58 +1,100 @@
-table { border-collapse: collapse; width: 100%; margin: 20px 0; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        input { width: 100%; padding: 4px; box-sizing: border-box; }
-        .error { color: red; }
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 20px 0;
+}
 
-        #totalRow {
-            background-color: #f5f5f5;
-            font-weight: bold;
-        }
-        input[type="number"] {
-            width: 100px;
-        }
-        .sum {
-            min-width: 120px;
-        }
+th,
+td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
 
-        h1 {
-            color: #2c3e50;
-            font-family: Arial, sans-serif;
-            font-size: 26px;
-            margin: 20px 0;
-            text-align: center;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+input {
+    width: 100%;
+    padding: 4px;
+    box-sizing: border-box;
+}
 
-        #lastUpdate {
-            color: #228b22;
-            font-weight: bold;
-        }
-        button {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background: #45a049;
-        }
+.error {
+    color: red;
+}
 
-        .delete-row {
-            background: #ff4444;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            cursor: pointer;
-            font-size: 18px;
-            line-height: 1;
-            padding: 0;
-        }
-        
-        .delete-row:hover {
-            background: #cc0000;
-        }
+#totalRow {
+    background-color: #f5f5f5;
+    font-weight: bold;
+}
+
+input[type="number"] {
+    width: 100px;
+}
+
+.sum {
+    min-width: 120px;
+    text-align: right;
+    padding-right: 20px !important;
+}
+
+h1 {
+    color: #2c3e50;
+    font-family: Arial, sans-serif;
+    font-size: 26px;
+    margin: 20px 0;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+#lastUpdate {
+    color: #228b22;
+    font-weight: bold;
+}
+
+button {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #45a049;
+}
+
+.delete-row {
+    background: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    padding: 0;
+}
+
+.delete-row:hover {
+    background: #cc0000;
+}
+
+#stocksTable th:nth-child(6),
+#stocksTable th:nth-child(7),
+#stocksTable th:nth-child(8) {
+    background: #f1c40f;
+    color: #2c3e50;
+}
+
+#totalDividends {
+    color: #27ae60;
+    font-weight: bold;
+}
+
+#totalSum {
+    color: #27ae60;
+    text-align: right;
+    font-weight: bold;
+}
