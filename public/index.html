@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Учёт инвестиций</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Сервис учёта инвестиций</h1>
+    <div id="status">
+        Последнее обновление: <span id="lastUpdate">-</span>
+        <button onclick="manualRefresh()">⟳ Обновить сейчас</button>
+    </div>
+    <table id="stocksTable">
+        <thead>
+            <tr>
+                <th>Тикер</th>
+                <th>Компания</th>
+                <th>Цена</th>
+                <th>Количество</th>
+                <th>Сумма</th>
+                <th><!-- Новый столбец для кнопки --></th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Строки будут добавляться автоматически -->
+        </tbody>
+        <tfoot>
+            <tr id="totalRow">
+                <td colspan="4">Итого:</td>
+                <td id="totalSum">0 ₽</td>
+            </tr>
+        </tfoot>
+    </table>
+    <script src="app.js"></script>
+</body>
+</html>
