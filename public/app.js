@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalDividendsElement = document.querySelector('#totalDividends');
     const lastUpdateElement = document.querySelector('#lastUpdate');
     let isUpdating = false;
+    checkAuthStatus();
 
     // Создание строки
     function createRow() {
@@ -100,60 +101,59 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Обработчик ввода тикера
-async function handleTickerInput(row, ticker) {
-    if (isUpdating || !ticker.trim()) return;
-    isUpdating = true;
+    async function handleTickerInput(row, ticker) {
+        if (isUpdating || !ticker.trim()) return;
+        isUpdating = true;
 
-    try {
-        const upperTicker = ticker.toUpperCase();
-        
-        // 1. Запрос данных акции с MOEX
-        const stockData = await fetchStockData(upperTicker);
-        if (stockData.error) throw new Error(stockData.error);
+        try {
+            const upperTicker = ticker.toUpperCase();
 
-        // 2. Параллельный запрос дивидендов с dohod.ru
-        const dividendPromise = fetchDividendData(upperTicker);
+            // 1. Запрос данных акции с MOEX
+            const stockData = await fetchStockData(upperTicker);
+            if (stockData.error) throw new Error(stockData.error);
 
-        // 3. Обновление основной информации
-        row.querySelector('.company-name').textContent = stockData.name || "—";
-        row.querySelector('.price').textContent = stockData.price ? 
-            `${stockData.price.toFixed(2)} ₽` : "—";
-        row.querySelector('.ticker-input').value = upperTicker;
+            // 2. Параллельный запрос дивидендов с dohod.ru
+            const dividendPromise = fetchDividendData(upperTicker);
 
-        // 4. Обработка дивидендов
-        const dividendData = await dividendPromise;
-        if (!dividendData.error) {
-            const dividendValue = dividendData.value;
-            const price = stockData.price || 0;
-            
-            // Обновление дивидендных полей
-            row.querySelector('.dividend-per-share').textContent = 
-                `${dividendValue.toFixed(2)} ₽`;
-            row.querySelector('.dividend-yield').textContent = 
-                `${((dividendValue / price) * 100).toFixed(2)}%`;
+            // 3. Обновление основной информации
+            row.querySelector('.company-name').textContent = stockData.name || "—";
+            row.querySelector('.price').textContent = stockData.price ?
+                `${stockData.price.toFixed(2)} ₽` : "—";
+            row.querySelector('.ticker-input').value = upperTicker;
+
+            // 4. Обработка дивидендов
+            const dividendData = await dividendPromise;
+            if (!dividendData.error) {
+                const dividendValue = dividendData.value;
+                const price = stockData.price || 0;
+
+                // Обновление дивидендных полей
+                row.querySelector('.dividend-per-share').textContent =
+                    `${dividendValue.toFixed(2)} ₽`;
+                row.querySelector('.dividend-yield').textContent =
+                    `${((dividendValue / price) * 100).toFixed(2)}%`;
+            }
+
+            // 5. Добавление новой строки
+            if (row === tbody.lastElementChild) {
+                const newRow = createRow();
+                tbody.appendChild(newRow);
+                addEventListenersToRow(newRow);
+            }
+
+        } catch (error) {
+            row.querySelector('.company-name').textContent = "Ошибка";
+            row.querySelector('.price').textContent = "—";
+            row.querySelector('.dividend-per-share').textContent = "—";
+            row.querySelector('.dividend-yield').textContent = "—";
+        } finally {
+            updateTotalSum();
+            updateTotalDividends();
+            isUpdating = false;
         }
-
-        // 5. Добавление новой строки
-        if (row === tbody.lastElementChild) {
-            const newRow = createRow();
-            tbody.appendChild(newRow);
-            addEventListenersToRow(newRow);
-        }
-
-    } catch (error) {
-        row.querySelector('.company-name').textContent = "Ошибка";
-        row.querySelector('.price').textContent = "—";
-        row.querySelector('.dividend-per-share').textContent = "—";
-        row.querySelector('.dividend-yield').textContent = "—";
-    } finally {
-        updateTotalSum();
-        updateTotalDividends();
-        isUpdating = false;
     }
-}
 
     // Обработчики событий
-    // Добавляем обработчик для ввода количества
     function addEventListenersToRow(row) {
         const tickerInput = row.querySelector('.ticker-input');
         const quantityInput = row.querySelector('.quantity-input');
@@ -260,4 +260,130 @@ async function handleTickerInput(row, ticker) {
         updateTotalSum();
         updateTotalDividends();
     }
+
+    async function login() {
+        const response = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value
+            })
+        });
+
+        if (response.ok) window.location.reload();
+    }
+
+    // При загрузке страницы
+    async function loadAssets() {
+        const response = await fetch('/api/assets');
+        const assets = await response.json();
+
+        // Отрисовка таблицы с данными из assets
+    }
+
+    // Проверка авторизации при загрузке
+    async function checkAuth() {
+        const response = await fetch('/api/check-auth');
+        if (!response.ok) window.location.href = '/login.html';
+    }
+
+    // Отображение имени пользователя
+    async function loadUserInfo() {
+        const response = await fetch('/api/user');
+        const user = await response.json();
+        document.getElementById('usernameDisplay').textContent = user.username;
+    }
+
+    // Выход
+// Функция выхода
+async function logout() {
+    try {
+        const response = await fetch('/api/logout', {
+            method: 'POST',
+            credentials: 'include' // Для передачи кук
+        });
+
+        if (response.ok) {
+            window.location.href = '/login.html';
+        } else {
+            console.error('Ошибка выхода:', await response.text());
+        }
+    } catch (error) {
+        console.error('Ошибка сети:', error);
+    }
+}
+
+// Инициализация после загрузки страницы
+document.addEventListener('DOMContentLoaded', () => {
+    const logoutButton = document.getElementById('logoutButton');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', handleLogout);
+        logoutButton.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleLogout(e);
+        });
+    }
 });
+
+// Проверка статуса авторизации
+async function checkAuthStatus() {
+    try {
+        const response = await fetch('/api/check-auth', {
+            credentials: 'include'
+        });
+        
+        if (response.ok) {
+            const userData = await fetch('/api/user', {
+                credentials: 'include'
+            }).then(res => res.json());
+            
+            document.getElementById('currentUser').textContent = `👤 ${userData.username}`;
+        } else {
+            window.location.href = '/login.html';
+        }
+    } catch (error) {
+        console.error('Auth check error:', error);
+    }
+}
+
+    // Инициализация
+    checkAuth();
+    loadUserInfo();
+
+    const logoutButton = document.getElementById('logoutButton');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', handleLogout);
+    }
+
+    checkAuthStatus();
+    loadUserInfo();
+    initTable();
+});
+
+// Вынесенная наружу функция обработки выхода
+async function handleLogout(e) {
+    e.preventDefault();
+    const button = e.currentTarget;
+    
+    try {
+        button.disabled = true;
+        button.style.opacity = '0.7';
+        
+        const response = await fetch('/api/logout', {
+            method: 'POST',
+            credentials: 'include'
+        });
+
+        if (response.ok) {
+            window.location.href = '/login.html';
+        } else {
+            alert('Ошибка выхода. Попробуйте снова.');
+        }
+    } catch (error) {
+        console.error('Logout failed:', error);
+    } finally {
+        button.disabled = false;
+        button.style.opacity = '1';
+    }
+}
+

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Регистрация</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="auth-container">
+        <h1>Регистрация</h1>
+        <div id="error" class="error-message"></div>
+        
+        <form id="registerForm">
+            <input type="text" 
+                   id="username" 
+                   placeholder="Логин" 
+                   required
+                   autocomplete="username">
+            
+            <input type="password" 
+                   id="password" 
+                   placeholder="Пароль" 
+                   required
+                   autocomplete="new-password">
+                   
+            <input type="password" 
+                   id="confirmPassword" 
+                   placeholder="Повторите пароль" 
+                   required
+                   autocomplete="new-password">
+            
+            <button type="submit">Зарегистрироваться</button>
+        </form>
+        
+        <div class="auth-links">
+            <a href="/login.html">Уже есть аккаунт?</a>
+        </div>
+    </div>
+    
+    <script src="/auth.js"></script>
+</body>
+</html>

@@ -1,16 +1,25 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Учёт инвестиций</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <h1>СЕРВИС УЧЁТА ИНВЕСТИЦИЙ</h1>
+    <div id="authBar">
+        <span id="currentUser"></span>
+        <span>Вы вошли как: <span id="usernameDisplay"></span></span>
+        <button id="logoutButton" class="logout-btn">
+            <span class="logout-icon">🚪</span>
+            Выйти
+        </button>
+    </div>
     <div id="status">
         Последнее обновление: <span id="lastUpdate">-</span>
         <button onclick="manualRefresh()">⟳ Обновить данные</button>
     </div>
-    
     <table id="stocksTable">
         <thead>
             <tr>
@@ -38,4 +47,5 @@
 
     <script src="app.js"></script>
 </body>
+
 </html>
